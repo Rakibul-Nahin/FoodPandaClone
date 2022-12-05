@@ -1,6 +1,8 @@
 import { StyleSheet, TextView, TouchableOpacity, FlatList,
-    TextInput, View, Text, Dimensions, Image, ScrollView,  } from 'react-native' 
-import { useState } from 'react'
+    TextInput, View, Text, Dimensions, Image, ScrollView,  
+} from 'react-native';
+import { useState } from 'react';
+import { NavigationContainer } from '@react-navigation/native';
 
 
 import hamburgerIcon from "../assets/hamburger.png"
@@ -38,7 +40,7 @@ import beverage3 from "../assets/Delivery/beverage/beverage3.png"
 import beverage4 from "../assets/Delivery/beverage/beverage4.png"
 
 
-export default function Delivery(){
+export default function Delivery({navigation}){
 
     const [headerVisible, setHeaderVisible] = useState("flex")
 
@@ -154,17 +156,20 @@ export default function Delivery(){
 
                 <View style={{flexDirection: "row"}}>
 
+                    <View style={{flexDirection: "row", width: "80%", marginLeft:10}}>
+                        <TouchableOpacity onPress={()=>{navigation.goBack()}}>
+                            <Image 
+                                source={backIcon}
+                                style={styles.backIcon}
+                            />
+                        </TouchableOpacity>
+                        
+                        <View>
+                            <Text style={{ fontSize: 18, fontWeight:"800"}}>Food Delivery</Text>
+                            <Text style={{ fontSize: 12, marginBottom:15}}>Selected Location</Text>
 
-                    
-                    <TouchableOpacity>
-                        <Image 
-                            source={backIcon}
-                            style={styles.backIcon}
-                        />
-                    </TouchableOpacity>
-                    
-
-                    <Text style={{ fontSize: 20}}>Food Delivery</Text>
+                        </View>
+                    </View>                    
 
                     <TouchableOpacity>
                         <Image 
@@ -272,7 +277,7 @@ const styles = StyleSheet.create({
         width: Dimensions.get("window").width,
         paddingTop: 10,
         paddingBottom: 10,
-        marginTop: 30,
+        marginTop: 15,
         marginLeft: 20,
         flexDirection: "column",
         textAlign: "center",
@@ -285,7 +290,7 @@ const styles = StyleSheet.create({
         width: 20, 
         height: 20, 
         marginBottom: 10,
-        marginRight: 10
+        marginRight: 20
     },
 
     shopIcon:{
@@ -302,8 +307,9 @@ const styles = StyleSheet.create({
         justifyContent: 'center', 
         width:"80%",
         borderRadius: 20,
-        borderWidth: 1,
-        borderColor: "black",
+        // borderWidth: 1,
+        // borderColor: "black",
+        backgroundColor: "rgba(222, 224, 227, 0.2)"
     },
 
     searchIcon: {
@@ -345,7 +351,7 @@ const styles = StyleSheet.create({
     ratingView:{
         flexDirection: "row",
         position: "absolute",
-        bottom: 60,
+        bottom: 52,
         right: 10
     },
 
