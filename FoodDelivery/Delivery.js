@@ -191,7 +191,7 @@ export default function Delivery({navigation}){
                         />
 
                         <TextInput 
-                            style={{flex: 1}}
+                            style={{flex: 1, height:"100%"}}
                             placeholder="Search for restaurant & cuisines"
                         />
                     </View>
@@ -251,14 +251,6 @@ export default function Delivery({navigation}){
                     renderItem = {Card}
                     keyExtractor = {item => item.offername}
                 />
-
-                {/* <Text style={{marginLeft:15, marginTop:5, fontSize: 25, fontWeight: "800"}}>Exclusive Items</Text>
-                <FlatList 
-                    horizontal = {true}
-                    data={dailyOffers}
-                    renderItem = {Card}
-                    keyExtractor = {item => item.offername}
-                /> */}
 
             </ScrollView>
 
