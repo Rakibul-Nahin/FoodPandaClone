@@ -1,7 +1,7 @@
 import { StyleSheet, TextView, TouchableOpacity, FlatList,
-    TextInput, View, Text, Dimensions, Image, ScrollView,  
+    TextInput, View, Text, Dimensions, Image, ScrollView, Animated,  
 } from 'react-native';
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 
 
@@ -42,7 +42,9 @@ import beverage4 from "../assets/Delivery/beverage/beverage4.png"
 
 export default function Delivery({navigation}){
 
-    const [headerVisible, setHeaderVisible] = useState("flex")
+    const [headerVisible, setHeaderVisible] = useState("show");
+    const height = useRef(new Animated.Value(40)).current
+    const opacity = useRef(new Animated.Value(1)).current
 
     const [dailyOffers, setDailyOffers] = useState([
         {itemName: "Offer 1", itemType: "Family", itemTime: "40", itemSold: 100,
@@ -146,6 +148,34 @@ export default function Delivery({navigation}){
         )
     }
 
+    useEffect(()=>{
+        console.log(headerVisible)
+        if(headerVisible == "show"){
+            Animated.timing(height, {
+                toValue: 40,
+                duration: 1000,
+                useNativeDriver: false,
+            }).start()
+            Animated.timing(opacity, {
+                toValue: 1,
+                duration: 1000,
+                useNativeDriver: false,
+            }).start()
+        }else{
+            Animated.timing(height, {
+                toValue: 0,
+                duration: 1000,
+                useNativeDriver: false,
+            }).start()
+    
+            Animated.timing(opacity, {
+                toValue: 0,
+                duration: 1000,
+                useNativeDriver: false,
+            }).start()
+        }
+    }, [headerVisible])
+
 
     return(
 
@@ -182,7 +212,15 @@ export default function Delivery({navigation}){
                 </View>
 
                 {/* Search bar and filter */}
-                <View style={ {flexDirection: "row", justifyContent: "center", display: headerVisible}}>
+                <Animated.View
+                style={[
+                    {   display: "flex",
+                        flexDirection: 'row',
+                        justifyContent: 'center',
+                        height: height, opacity: opacity,
+                    },
+                    // headerVisible
+                ]}>
 
                     <View style={styles.searchBar}>
                         <Image 
@@ -203,21 +241,27 @@ export default function Delivery({navigation}){
                         />
                     </TouchableOpacity>
 
-                </View>
+                </Animated.View>
 
             
             </View>  
 
             {/* Body */}
-            <ScrollView onScroll={(event)=>{
-                const scrolling = event.nativeEvent.contentOffset.y;
-                if(scrolling>10){
-                    setHeaderVisible("none")
-                }else{
-                    setHeaderVisible("flex")
-                }
-            }}
-            style={{marginLeft:10}}
+            <ScrollView style={{marginLeft:10}}
+
+                onScroll={(event)=>{
+                    const scrolling = event.nativeEvent.contentOffset.y;
+                    if(scrolling>300){
+                        // hideSeachView()
+                        setHeaderVisible("hide")
+                    }else{
+                        // showSeachView()
+                        setHeaderVisible("show")
+                    }
+                }}
+
+                scrollEventThrottle={16}
+                useNativeDriver={true}
             >
 
                 <Text style={{marginLeft:15, marginTop:5, fontSize: 20, fontWeight: "700"}}>Bundle Items</Text>

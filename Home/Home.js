@@ -1,9 +1,9 @@
 import {
     StyleSheet, TextView, TouchableOpacity, SafeAreaView,
     TextInput, View, Text, Dimensions, Image, FlatList,
-    Button,ScrollView,
+    Button,ScrollView, Animated,
   } from 'react-native';
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
@@ -41,7 +41,10 @@ import icecreamImage from "../assets/cuisines/icecream.png"
   
 export default function Home({ navigation }) {
 
-    const [headerVisible, setHeaderVisible] = useState('flex');
+    const [headerVisible, setHeaderVisible] = useState("show");
+    const height = useRef(new Animated.Value(40)).current
+    const opacity = useRef(new Animated.Value(1)).current
+
     const [dailyOffers, setDailyOffers] = useState([
         {itemName: "Offer 1", itemType: "Family", itemTime: "40", itemSold: 100,
             itemImage: offer1, rating: "4.5", deliveryType: "Free delivery"
@@ -126,54 +129,104 @@ export default function Home({ navigation }) {
 
     )
 
+    useEffect(()=>{
+        console.log(headerVisible)
+        if(headerVisible == "show"){
+            Animated.timing(height, {
+                toValue: 40,
+                duration: 1000,
+                useNativeDriver: false,
+            }).start()
+            Animated.timing(opacity, {
+                toValue: 1,
+                duration: 1000,
+                useNativeDriver: false,
+            }).start()
+        }else{
+            Animated.timing(height, {
+                toValue: 0,
+                duration: 1000,
+                useNativeDriver: false,
+            }).start()
+    
+            Animated.timing(opacity, {
+                toValue: 0,
+                duration: 1000,
+                useNativeDriver: false,
+            }).start()
+        }
+    }, [headerVisible])
+
+
     return (
         <View style={styles.parentView}>
             {/* header */}
             <View style={styles.header}>
-                <View style={{ flexDirection: 'row' }}>
-                <View style={{ flexDirection: 'row', width: '80%', marginLeft: 10 }}>
-                    <TouchableOpacity>
-                    <Image source={hamburgerIcon} style={styles.hamburgerIcon} />
-                    </TouchableOpacity>
+                <View style={{ flexDirection: 'row',}}>
+                    <View style={{ flexDirection: 'row', width: '80%', marginLeft: 10,}}>
+                        <TouchableOpacity>
+                            <Image source={hamburgerIcon} style={styles.hamburgerIcon} />
+                        </TouchableOpacity>
 
-                    <View>
-                    <Text style={{ color: 'white', fontSize: 18, fontWeight: '800' }}>
-                        Food Delivery
-                    </Text>
-                    <Text style={{ color: 'white', fontSize: 12, marginBottom: 15 }}>
-                        Selected Location
-                    </Text>
+                        <View style={{flexDirection: "column", width: "90%"}}>
+                            <Text style={{ color: 'white', fontSize: 18, fontWeight: '800', }}>
+                                Europa, Third Orbit, Jupiter, Sol, Milky Way 
+                            </Text>
+                            <Text style={{ color: 'white', fontSize: 12, marginBottom: 15 }}>
+                                Selected Location
+                            </Text>
+                        </View>
                     </View>
-                </View>
 
-                <TouchableOpacity>
-                    <Image source={shopIcon} style={styles.shopIcon} />
-                </TouchableOpacity>
+                    <TouchableOpacity>
+                        <Image source={shopIcon} style={styles.shopIcon} />
+                    </TouchableOpacity>
                 </View>
 
                 {/* Search bar and filter */}
-                <View
-                style={{
-                    flexDirection: 'row',
-                    justifyContent: 'center',
-                    display: headerVisible,
-                }}>
-                <View style={styles.searchBar}>
-                    <Image
-                    source={searchIcon}
-                    style={[styles.searchIcon, { marginRight: 30 }]}
-                    />
+                <Animated.View
+                style={[
+                    {   display: "flex",
+                        flexDirection: 'row',
+                        justifyContent: 'center',
+                        height: height, opacity: opacity,
+                    },
+                    // headerVisible
+                ]}>
+                    
+                    <View style={styles.searchBar}>
+                        <Image
+                            source={searchIcon}
+                            style={[styles.searchIcon, { marginRight: 30}]}
+                        />
 
-                    <TextInput
-                    style={{ flex: 1 }}
-                    placeholder="Search for restaurant & cuisines"
-                    />
-                </View>
-                </View>
+                        <TextInput
+                        style={{ flex: 1 }}
+                        placeholder="Search for restaurant & cuisines"
+                        />
+                    </View>
+                </Animated.View>
+
             </View>
 
+
             {/* Body */}
-            <ScrollView style={{height:540}}>
+            <ScrollView style={{height:540}}
+
+                onScroll={(event)=>{
+                    const scrolling = event.nativeEvent.contentOffset.y;
+                    if(scrolling>300){
+                        // hideSeachView()
+                        setHeaderVisible("hide")
+                    }else{
+                        // showSeachView()
+                        setHeaderVisible("show")
+                    }
+                }}
+
+                scrollEventThrottle={16}
+                useNativeDriver={true}
+            >
 
                 {/* Multiple options card */}
                 <View style={styles.optionsView}>
@@ -302,8 +355,6 @@ export default function Home({ navigation }) {
                         renderItem={CuisineCard}
                     />
                     </ScrollView>
-
-                    
 
                 </View>
 
